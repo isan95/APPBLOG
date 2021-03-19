@@ -1,0 +1,178 @@
+-- phpMyAdmin SQL Dump
+-- version 4.8.0
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 12-03-2019 a las 19:31:48
+-- Versión del servidor: 10.1.31-MariaDB
+-- Versión de PHP: 5.6.35
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Base de datos: `bd_blog`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_categorias`
+--
+
+CREATE TABLE `t_categorias` (
+  `CAT_ID` int(11) NOT NULL,
+  `CAT_NOMBRE` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `t_categorias`
+--
+
+INSERT INTO `t_categorias` (`CAT_ID`, `CAT_NOMBRE`) VALUES
+(1, 'java'),
+(2, 'PHP');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_comentarios`
+--
+
+CREATE TABLE `t_comentarios` (
+  `COM_ID` int(11) NOT NULL,
+  `COM_COMENTARIO` text NOT NULL,
+  `COM_FCH_RGT` datetime NOT NULL,
+  `COM_FCH_ACT` datetime NOT NULL,
+  `COM_USU_ID` int(11) NOT NULL,
+  `COM_POST_ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_post`
+--
+
+CREATE TABLE `t_post` (
+  `POST_ID` int(11) NOT NULL,
+  `POST_TITULO` varchar(50) NOT NULL,
+  `POST_COMENTARIO` text NOT NULL,
+  `POST_FCH_RGT` datetime NOT NULL,
+  `POST_FCH_ACT` datetime NOT NULL,
+  `POST_ESTADO` int(11) NOT NULL,
+  `POST_USU_ID` int(11) NOT NULL,
+  `POST_CAT_ID` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `t_post`
+--
+
+INSERT INTO `t_post` (`POST_ID`, `POST_TITULO`, `POST_COMENTARIO`, `POST_FCH_RGT`, `POST_FCH_ACT`, `POST_ESTADO`, `POST_USU_ID`, `POST_CAT_ID`) VALUES
+(1, 'VARIABLES GLOBALES', 'LAS VARIABLES GLOBALES', '2019-02-26 05:29:26', '2019-02-26 05:29:26', 1, 1, 2),
+(2, 'HERENCIA EN JAVA', 'JJKLKJ', '2019-03-11 01:34:50', '2019-03-11 01:34:50', 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_usuarios`
+--
+
+CREATE TABLE `t_usuarios` (
+  `USU_ID` int(11) NOT NULL,
+  `USU_NICK` varchar(10) NOT NULL,
+  `USU_PASSWORD` varchar(50) NOT NULL,
+  `USU_CORREO` varchar(20) NOT NULL,
+  `USU_ROL` int(11) NOT NULL,
+  `USU_FCH_RGT` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `t_usuarios`
+--
+
+INSERT INTO `t_usuarios` (`USU_ID`, `USU_NICK`, `USU_PASSWORD`, `USU_CORREO`, `USU_ROL`, `USU_FCH_RGT`) VALUES
+(1, 'ADMIN', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'ADMIN@ADMIN.COM', 1, '2019-02-11 00:00:00'),
+(2, 'cyepes', 'a5ca3b392f50941ea6c5e075b9de87f9359ff5e6', 'c@hotmail.com', 2, '2019-02-19 05:07:35');
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `t_categorias`
+--
+ALTER TABLE `t_categorias`
+  ADD PRIMARY KEY (`CAT_ID`);
+
+--
+-- Indices de la tabla `t_comentarios`
+--
+ALTER TABLE `t_comentarios`
+  ADD PRIMARY KEY (`COM_ID`),
+  ADD KEY `COM_USU_ID` (`COM_USU_ID`),
+  ADD KEY `COM_POST_ID` (`COM_POST_ID`);
+
+--
+-- Indices de la tabla `t_post`
+--
+ALTER TABLE `t_post`
+  ADD PRIMARY KEY (`POST_ID`),
+  ADD KEY `POST_USU_ID` (`POST_USU_ID`),
+  ADD KEY `POST_CAT_ID` (`POST_CAT_ID`);
+
+--
+-- Indices de la tabla `t_usuarios`
+--
+ALTER TABLE `t_usuarios`
+  ADD PRIMARY KEY (`USU_ID`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `t_categorias`
+--
+ALTER TABLE `t_categorias`
+  MODIFY `CAT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `t_comentarios`
+--
+ALTER TABLE `t_comentarios`
+  MODIFY `COM_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `t_post`
+--
+ALTER TABLE `t_post`
+  MODIFY `POST_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `t_usuarios`
+--
+ALTER TABLE `t_usuarios`
+  MODIFY `USU_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `t_comentarios`
+--
+ALTER TABLE `t_comentarios`
+  ADD CONSTRAINT `t_comentarios_ibfk_1` FOREIGN KEY (`COM_USU_ID`) REFERENCES `t_usuarios` (`USU_ID`),
+  ADD CONSTRAINT `t_comentarios_ibfk_2` FOREIGN KEY (`COM_POST_ID`) REFERENCES `t_post` (`POST_ID`);
+
+--
+-- Filtros para la tabla `t_post`
+--
+ALTER TABLE `t_post`
+  ADD CONSTRAINT `t_post_ibfk_1` FOREIGN KEY (`POST_USU_ID`) REFERENCES `t_usuarios` (`USU_ID`),
+  ADD CONSTRAINT `t_post_ibfk_2` FOREIGN KEY (`POST_CAT_ID`) REFERENCES `t_categorias` (`CAT_ID`);
+COMMIT;
